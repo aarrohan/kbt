@@ -1,7 +1,14 @@
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export default async function ResetPassword() {
+  const session = await getServerSession(authOptions);
+
+  if (session) return redirect("/dashboard");
+
   return (
     <main className="min-h-screen flex items-center">
       <section className="w-full py-24">

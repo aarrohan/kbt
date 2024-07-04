@@ -1,18 +1,52 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
+import { SignInResponse, signIn } from "next-auth/react";
+import { useToast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 export default function Form() {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
+  const { toast } = useToast();
+  const router = useRouter();
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    setIsLoading(true);
+
+    const res: SignInResponse | undefined = await signIn("credentials", {
+      username,
+      password,
+      redirect: false,
+    });
+
+    setIsLoading(false);
+
+    if (res?.ok) {
+      router.push("/dashboard");
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Invalid credentials, please try again",
+      });
+    }
+  };
+
   return (
-    <form className="mx-auto max-w-[350px] flex flex-col gap-3">
+    <form
+      onSubmit={handleSubmit}
+      className="mx-auto max-w-[350px] flex flex-col gap-3"
+    >
       <Input
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
           setUsername(e.target.value);
@@ -65,7 +99,9 @@ export default function Form() {
         </Link>
       </div>
 
-      <Button>Sign in</Button>
+      <Button disabled={isLoading}>
+        {isLoading && <Loader2 className="mr-2 w-4 h-4 animate-spin" />} Sign in
+      </Button>
     </form>
   );
 }
