@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-color-rgb: 247 245 238;
+  --secondary-color-rgb: 0 0 0;
+
+  --white-color-rgb: 247 245 238;
+  --dark-color-rgb: 0 0 0;
+
+  --foreground-1-color-rgb: 233 223 213;
+  --foreground-2-color-rgb: 247 245 238;
+}
+
+body {
+  background: rgb(var(--foreground-1-color-rgb));
+}
+
+nav ul li a:hover {
+  color: rgb(var(--white-color-rgb)) !important;
+}
+
+nav.dark ul li a:hover {
+  color: rgb(var(--dark-color-rgb)) !important;
+}
+
+.links-wrapper a:hover {
+  color: rgb(var(--dark-color-rgb)) !important;
+}
+
+input,
+textarea {
+  outline: none;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
