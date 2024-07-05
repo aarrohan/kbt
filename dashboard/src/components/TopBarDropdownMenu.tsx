@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { signOut } from "next-auth/react";
 
 interface IProps {
   user: {
@@ -37,7 +38,14 @@ export default function TopBarDropdownMenu({ user }: IProps) {
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem className="font-medium cursor-pointer">
+        <DropdownMenuItem
+          onClick={async () => {
+            await signOut({
+              callbackUrl: "/",
+            });
+          }}
+          className="font-medium cursor-pointer"
+        >
           Log out
         </DropdownMenuItem>
       </DropdownMenuContent>
