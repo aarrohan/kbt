@@ -49,17 +49,17 @@ export default function SideBar() {
         {
           title: "Transactions",
           icon: <CreditCard className="w-5 h-5" />,
-          href: "/dashboard/reports",
+          href: "/dashboard/transactions",
         },
         {
           title: "Customers",
           icon: <UsersRound className="w-5 h-5" />,
-          href: "/dashboard/reports",
+          href: "/dashboard/customers",
         },
         {
           title: "Reviews",
           icon: <MessageSquare className="w-5 h-5" />,
-          href: "/dashboard/reports",
+          href: "/dashboard/reviews",
         },
         {
           title: "Products",
@@ -94,7 +94,7 @@ export default function SideBar() {
         {
           title: "Settings",
           icon: <Settings className="w-5 h-5" />,
-          href: "/dashboard/reports",
+          href: "/dashboard/settings",
         },
       ],
     },

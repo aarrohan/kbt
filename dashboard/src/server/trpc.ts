@@ -15,7 +15,7 @@ const isAuth = middleware(async (opts) => {
 
   return opts.next({
     ctx: {
-      userId: session.user.id,
+      id: session.user.id,
       role: session.user.role,
     },
   });

@@ -1,12 +1,10 @@
-import { privateProcedure, router } from "./trpc";
-import prisma from "@/lib/prisma";
+import { router } from "./trpc";
 import { TRPCError } from "@trpc/server";
-import { z } from "zod";
-import bcrypt from "bcryptjs";
+import { categoryRouter } from "./routers/category";
 
-const roleBasedAuth = (
+export const roleBasedAuth = (
   ctx: {
-    userId: string;
+    id: string;
     role: string;
   },
   roles: string[]
@@ -19,6 +17,8 @@ const roleBasedAuth = (
   }
 };
 
-export const appRouter = router({});
+export const appRouter = router({
+  category: categoryRouter,
+});
 
 export type AppRouter = typeof appRouter;

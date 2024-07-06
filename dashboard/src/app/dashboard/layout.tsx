@@ -11,7 +11,7 @@ export default async function DashboardLayout({
     <main className="dashboard-page h-screen">
       <SideBar />
 
-      <ScrollArea className="max-h-screen p-10 pb-0">
+      <ScrollArea className="max-h-screen px-10">
         <TopBar />
 
         <div className="px-1">{children}</div>

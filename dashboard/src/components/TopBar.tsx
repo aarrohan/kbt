@@ -2,6 +2,7 @@ import TopBarDropdownMenu from "./TopBarDropdownMenu";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import TopBarTitle from "./TopBarTitle";
 
 export default async function TopBar() {
   const session = await getServerSession(authOptions);
@@ -12,9 +13,9 @@ export default async function TopBar() {
   });
 
   return (
-    <div className="mb-10 flex justify-between items-center">
+    <div className="mb-10 pt-10 flex justify-between items-center">
       <div>
-        <h2 className="mb-1 text-2xl font-extrabold">Overview</h2>
+        <TopBarTitle />
         <p className="text-muted-foreground">👋 Hey, {user?.name}</p>
       </div>
 
