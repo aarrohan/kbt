@@ -1,7 +1,11 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import CategoriesTable from "./CategoriesTable";
+import prisma from "@/lib/prisma";
 
-export default function Categories() {
+export default async function Categories() {
+  const categories = await prisma.category.findMany();
+
   return (
     <div>
       <div className="flex justify-between items-center">
@@ -12,6 +16,10 @@ export default function Categories() {
         <Button asChild>
           <Link href={"/dashboard/categories/create"}>New category</Link>
         </Button>
+      </div>
+
+      <div>
+        <CategoriesTable data={categories} />
       </div>
     </div>
   );

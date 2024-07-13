@@ -2,7 +2,6 @@ import { privateProcedure, router } from "../trpc";
 import prisma from "@/lib/prisma";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { roleBasedAuth } from "../index";
 
 export const categoryRouter = router({
   create: privateProcedure
@@ -20,9 +19,7 @@ export const categoryRouter = router({
         publishDate: z.string().optional(),
       })
     )
-    .mutation(async ({ input, ctx }) => {
-      roleBasedAuth(ctx, ["admin"]);
-
+    .mutation(async ({ input }) => {
       const {
         parentCategoryId,
         visibility,
@@ -37,6 +34,8 @@ export const categoryRouter = router({
       } = input;
 
       const _publishDate = publishDate ? new Date(publishDate) : null;
+
+      console.log(_publishDate);
 
       const category = await prisma.category.findUnique({
         where: {
@@ -69,9 +68,7 @@ export const categoryRouter = router({
       return newCategory;
     }),
 
-  getAll: privateProcedure.query(async ({ ctx }) => {
-    roleBasedAuth(ctx, ["admin"]);
-
+  getAll: privateProcedure.query(async () => {
     const categories = await prisma.category.findMany();
 
     return categories;
@@ -83,9 +80,7 @@ export const categoryRouter = router({
         id: z.string(),
       })
     )
-    .query(async ({ input, ctx }) => {
-      roleBasedAuth(ctx, ["admin"]);
-
+    .query(async ({ input }) => {
       const { id } = input;
 
       const category = await prisma.category.findUnique({
@@ -110,9 +105,7 @@ export const categoryRouter = router({
         id: z.string(),
       })
     )
-    .mutation(async ({ input, ctx }) => {
-      roleBasedAuth(ctx, ["admin"]);
-
+    .mutation(async ({ input }) => {
       const { id } = input;
 
       const category = await prisma.category.findUnique({
