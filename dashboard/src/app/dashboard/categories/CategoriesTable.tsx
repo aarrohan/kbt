@@ -44,10 +44,11 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { trpc } from "@/app/_trpc/client";
+import Link from "next/link";
 
 interface TableRow {
   id: string;
-  visibility: "published" | "scheduled" | "hidden";
+  visibility: string;
   title: string;
   publishDate: string | null;
 }
@@ -157,7 +158,9 @@ const columns: ColumnDef<TableRow>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
-            <DropdownMenuItem>Edit</DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href={`/dashboard/categories/${tableRow.id}`}>Edit</Link>
+            </DropdownMenuItem>
 
             <AlertDialog>
               <AlertDialogTrigger asChild>

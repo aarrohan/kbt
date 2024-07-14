@@ -36,8 +36,6 @@ export const categoryRouter = router({
 
       const _publishDate = publishDate ? new Date(publishDate) : null;
 
-      console.log(_publishDate);
-
       const category = await prisma.category.findUnique({
         where: {
           slug,
@@ -112,6 +110,100 @@ export const categoryRouter = router({
       }
 
       return category;
+    }),
+
+  update: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        parentCategoryId: z.string().optional(),
+        visibility: z.enum(["published", "scheduled", "hidden"]),
+        newImgUrl: z.string().optional(),
+        slug: z.string(),
+        title: z.string(),
+        description: z.string(),
+        seoMetaTitle: z.string().optional(),
+        seoMetaDescription: z.string().optional(),
+        seoMetaKeywords: z.string().optional(),
+        publishDate: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const {
+        id,
+        parentCategoryId,
+        visibility,
+        newImgUrl,
+        slug,
+        title,
+        description,
+        seoMetaTitle,
+        seoMetaDescription,
+        seoMetaKeywords,
+        publishDate,
+      } = input;
+
+      const _publishDate = publishDate ? new Date(publishDate) : null;
+
+      const category = await prisma.category.findUnique({
+        where: {
+          id,
+        },
+      });
+
+      if (!category) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Category does not exist",
+        });
+      }
+
+      if (newImgUrl) {
+        const utapi = new UTApi();
+
+        const imgUrl = category.imgUrl.replace("https://utfs.io/f/", "");
+
+        await utapi.deleteFiles(imgUrl);
+
+        const updatedCategory = await prisma.category.update({
+          where: {
+            id,
+          },
+          data: {
+            parentCategoryId: parentCategoryId ? parentCategoryId : null,
+            visibility,
+            imgUrl: newImgUrl,
+            slug,
+            title,
+            description,
+            seoMetaTitle,
+            seoMetaDescription,
+            seoMetaKeywords,
+            publishDate: _publishDate,
+          },
+        });
+
+        return updatedCategory;
+      } else {
+        const updatedCategory = await prisma.category.update({
+          where: {
+            id,
+          },
+          data: {
+            parentCategoryId: parentCategoryId ? parentCategoryId : null,
+            visibility,
+            slug,
+            title,
+            description,
+            seoMetaTitle,
+            seoMetaDescription,
+            seoMetaKeywords,
+            publishDate: _publishDate,
+          },
+        });
+
+        return updatedCategory;
+      }
     }),
 
   delete: privateProcedure

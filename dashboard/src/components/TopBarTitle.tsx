@@ -68,7 +68,8 @@ export default function TopBarTitle() {
 
   return (
     <h2 className="mb-1 text-2xl font-extrabold">
-      {pageTitles.find((pageTitle) => pageTitle.path === pagePath)?.title}
+      {pageTitles.find((pageTitle) => pageTitle.path === pagePath)?.title ||
+        (pagePath.includes("/dashboard/categories/") && "Edit category")}
     </h2>
   );
 }

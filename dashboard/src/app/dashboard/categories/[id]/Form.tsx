@@ -11,56 +11,51 @@ import { useUploadThing } from "@/lib/uploadthing";
 import { useToast } from "@/components/ui/use-toast";
 import { trpc } from "@/app/_trpc/client";
 import { Loader2 } from "lucide-react";
+import type { Category } from "@prisma/client";
 
-export default function Form() {
-  const [isCreating, setIsCreating] = useState<boolean>(false);
+export default function Form({ category }: { category: Category }) {
+  const [isSavingChanges, setIsSavingChanges] = useState<boolean>(false);
 
-  const [parentCategoryId, setParentCategoryId] = useState<
-    string | undefined
-  >();
+  const [parentCategoryId, setParentCategoryId] = useState<string | undefined>(
+    category.parentCategoryId ? category.parentCategoryId : undefined
+  );
 
   const [visibility, setVisibility] = useState<
     "published" | "scheduled" | "hidden"
-  >("published");
+  >(category.visibility);
 
   const [imgFile, setImgFile] = useState<File[] | null>(null);
 
-  const [slug, setSlug] = useState<string>("");
-  const [title, setTitle] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
+  const [slug, setSlug] = useState<string>(category.slug);
+  const [title, setTitle] = useState<string>(category.title);
+  const [description, setDescription] = useState<string>(category.description);
 
-  const [seoMetaTitle, setSeoMetaTitle] = useState<string>("");
-  const [seoMetaDescription, setSeoMetaDescription] = useState<string>("");
-  const [seoMetaKeywords, setSeoMetaKeywords] = useState<string>("");
+  const [seoMetaTitle, setSeoMetaTitle] = useState<string>(
+    category.seoMetaTitle ? category.seoMetaTitle : ""
+  );
+  const [seoMetaDescription, setSeoMetaDescription] = useState<string>(
+    category.seoMetaDescription ? category.seoMetaDescription : ""
+  );
+  const [seoMetaKeywords, setSeoMetaKeywords] = useState<string>(
+    category.seoMetaKeywords ? category.seoMetaKeywords : ""
+  );
 
-  const [publishDate, setPublishDate] = useState<Date | undefined>();
+  const [publishDate, setPublishDate] = useState<Date | undefined>(
+    category.publishDate ? category.publishDate : undefined
+  );
 
   const { toast } = useToast();
   const { startUpload } = useUploadThing("imageUploader");
-  const { mutate: createCategory } = trpc.category.create.useMutation({
+  const { mutate: updateCategory } = trpc.category.update.useMutation({
     onMutate() {
-      setIsCreating(true);
+      setIsSavingChanges(true);
     },
     onSettled() {
-      setIsCreating(false);
+      setIsSavingChanges(false);
     },
     onSuccess() {
-      setParentCategoryId(undefined);
-
-      setVisibility("published");
-
-      setImgFile(null);
-
-      setSlug("");
-      setTitle("");
-      setDescription("");
-
-      setSeoMetaTitle("");
-      setSeoMetaDescription("");
-      setSeoMetaKeywords("");
-
       toast({
-        title: "Category created successfully",
+        title: "Category updated successfully",
       });
     },
     onError(err) {
@@ -71,18 +66,23 @@ export default function Form() {
     },
   });
 
-  const handleCreate = async () => {
+  const handleEdit = async () => {
     try {
-      setIsCreating(true);
+      setIsSavingChanges(true);
 
-      if (imgFile && slug && title && description) {
+      let newImgUrl;
+
+      if (imgFile) {
         const res = await startUpload(imgFile);
-        const imgUrl = res && res[0] ? res[0].url : "";
+        newImgUrl = res && res[0] ? res[0].url : "";
+      }
 
-        createCategory({
+      if (slug && title && description) {
+        updateCategory({
+          id: category.id,
           parentCategoryId,
           visibility,
-          imgUrl,
+          newImgUrl,
           slug,
           title,
           description,
@@ -98,7 +98,7 @@ export default function Form() {
         });
       }
     } catch {
-      setIsCreating(false);
+      setIsSavingChanges(false);
 
       toast({
         variant: "destructive",
@@ -111,7 +111,7 @@ export default function Form() {
     <div>
       <div className="flex justify-between items-center">
         <p className="text-sm text-muted-foreground">
-          Dashboard&nbsp;&nbsp;‣&nbsp;&nbsp;Categories&nbsp;&nbsp;‣&nbsp;&nbsp;Create
+          Dashboard&nbsp;&nbsp;‣&nbsp;&nbsp;Categories&nbsp;&nbsp;‣&nbsp;&nbsp;Edit
         </p>
 
         <div className="flex gap-2">
@@ -119,9 +119,11 @@ export default function Form() {
             <Link href={"/dashboard/categories"}>Go back</Link>
           </Button>
 
-          <Button onClick={handleCreate} disabled={isCreating}>
-            {isCreating && <Loader2 className="mr-2 w-4 h-4 animate-spin" />}{" "}
-            Create
+          <Button onClick={handleEdit} disabled={isSavingChanges}>
+            {isSavingChanges && (
+              <Loader2 className="mr-2 w-4 h-4 animate-spin" />
+            )}{" "}
+            Save changes
           </Button>
         </div>
       </div>
@@ -160,7 +162,11 @@ export default function Form() {
             setParentCategoryId={setParentCategoryId}
           />
 
-          <Img imgFile={imgFile} setImgFile={setImgFile} />
+          <Img
+            imgUrl={category.imgUrl}
+            imgFile={imgFile}
+            setImgFile={setImgFile}
+          />
         </div>
       </div>
     </div>
