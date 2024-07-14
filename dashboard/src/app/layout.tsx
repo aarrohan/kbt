@@ -12,7 +12,7 @@ const fontSans = FontSans({
 });
 
 export const metadata: Metadata = {
-  title: "Admin | KBT",
+  title: `Admin | ${process.env.APP_NAME}`,
 };
 
 export default async function RootLayout({

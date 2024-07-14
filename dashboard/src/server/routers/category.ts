@@ -2,6 +2,7 @@ import { privateProcedure, router } from "../trpc";
 import prisma from "@/lib/prisma";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
+import { UTApi } from "uploadthing/server";
 
 export const categoryRouter = router({
   create: privateProcedure
@@ -71,7 +72,21 @@ export const categoryRouter = router({
   getAll: privateProcedure.query(async () => {
     const categories = await prisma.category.findMany();
 
-    return categories;
+    return categories.map((category) => {
+      const publishDate = category.publishDate;
+
+      if (publishDate) {
+        if (new Date() > publishDate && category.visibility === "scheduled") {
+          return {
+            ...category,
+            visibility: "published",
+            publishDate: null,
+          };
+        }
+      }
+
+      return category;
+    });
   }),
 
   getSingle: privateProcedure
@@ -120,6 +135,12 @@ export const categoryRouter = router({
           message: "Category does not exist",
         });
       }
+
+      const utapi = new UTApi();
+
+      const imgUrl = category.imgUrl.replace("https://utfs.io/f/", "");
+
+      await utapi.deleteFiles(imgUrl);
 
       await prisma.category.delete({
         where: {

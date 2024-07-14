@@ -1,11 +1,13 @@
+import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import CategoriesTable from "./CategoriesTable";
-import prisma from "@/lib/prisma";
+import TableWrapper from "./TableWrapper";
 
-export default async function Categories() {
-  const categories = await prisma.category.findMany();
+export const metadata: Metadata = {
+  title: `Categories | ${process.env.APP_NAME}`,
+};
 
+export default function Categories() {
   return (
     <div>
       <div className="flex justify-between items-center">
@@ -19,7 +21,7 @@ export default async function Categories() {
       </div>
 
       <div>
-        <CategoriesTable data={categories} />
+        <TableWrapper />
       </div>
     </div>
   );

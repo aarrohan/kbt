@@ -31,12 +31,25 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { format } from "date-fns";
+import { useToast } from "@/components/ui/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { trpc } from "@/app/_trpc/client";
 
 interface TableRow {
   id: string;
   visibility: "published" | "scheduled" | "hidden";
   title: string;
-  publishDate: Date;
+  publishDate: string | null;
 }
 
 const columns: ColumnDef<TableRow>[] = [
@@ -111,7 +124,27 @@ const columns: ColumnDef<TableRow>[] = [
   {
     id: "actions",
     enableHiding: false,
-    cell: () => {
+    cell: ({ table, row }) => {
+      const tableRow = row.original;
+
+      const tableMeta = table.options.meta as any;
+
+      const { mutate: deleteCategory } = trpc.category.delete.useMutation({
+        onSuccess: () => {
+          tableMeta.refetchCategories();
+
+          tableMeta.toast({
+            title: "Category deleted successfully",
+          });
+        },
+        onError: (err) => {
+          tableMeta.toast({
+            variant: "destructive",
+            title: err.message,
+          });
+        },
+      });
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -125,7 +158,39 @@ const columns: ColumnDef<TableRow>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
             <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DropdownMenuItem>Delete</DropdownMenuItem>
+
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                  Delete
+                </DropdownMenuItem>
+              </AlertDialogTrigger>
+
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+
+                  <AlertDialogDescription className="font-medium">
+                    This will permanently delete and remove the category from
+                    database
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+
+                  <AlertDialogAction
+                    onClick={() =>
+                      deleteCategory({
+                        id: tableRow.id,
+                      })
+                    }
+                  >
+                    Continue
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -133,11 +198,19 @@ const columns: ColumnDef<TableRow>[] = [
   },
 ];
 
-export default function CategoriesTable({ data }: { data: TableRow[] }) {
+export default function CategoriesTable({
+  data,
+  refetchCategories,
+}: {
+  data: TableRow[];
+  refetchCategories: () => void;
+}) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
+
+  const { toast } = useToast();
 
   const table = useReactTable({
     data,
@@ -155,6 +228,10 @@ export default function CategoriesTable({ data }: { data: TableRow[] }) {
       columnFilters,
       columnVisibility,
       rowSelection,
+    },
+    meta: {
+      refetchCategories,
+      toast,
     },
   });
 
