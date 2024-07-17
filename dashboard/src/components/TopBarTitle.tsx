@@ -49,6 +49,10 @@ export default function TopBarTitle() {
       path: "/dashboard/coupons",
     },
     {
+      title: "New coupon",
+      path: "/dashboard/coupons/create",
+    },
+    {
       title: "Admins",
       path: "/dashboard/admins",
     },
@@ -69,7 +73,8 @@ export default function TopBarTitle() {
   return (
     <h2 className="mb-1 text-2xl font-extrabold">
       {pageTitles.find((pageTitle) => pageTitle.path === pagePath)?.title ||
-        (pagePath.includes("/dashboard/categories/") && "Edit category")}
+        (pagePath.includes("/dashboard/categories/") && "Edit category") ||
+        (pagePath.includes("/dashboard/coupons/") && "Edit coupon")}
     </h2>
   );
 }

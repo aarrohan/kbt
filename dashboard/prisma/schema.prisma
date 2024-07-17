@@ -13,6 +13,11 @@ enum Visibility {
   hidden
 }
 
+enum CouponType {
+  fixed
+  percentage
+}
+
 model DashboardUser {
   id           String    @id @default(auto()) @map("_id") @db.ObjectId
   role         String
@@ -39,4 +44,16 @@ model Category {
   publishDate        DateTime?
   createdAt          DateTime   @default(now())
   updatedAt          DateTime   @updatedAt
+}
+
+model Coupon {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  visibility  Visibility
+  type        CouponType
+  title       String
+  code        String     @unique
+  value       Int
+  publishDate DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
