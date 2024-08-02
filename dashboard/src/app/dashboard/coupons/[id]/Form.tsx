@@ -62,6 +62,8 @@ export default function Form({ coupon }: { coupon: Coupon }) {
           publishDate: publishDate ? publishDate.toString() : undefined,
         });
       } else {
+        setIsSavingChanges(false);
+
         toast({
           variant: "destructive",
           title: "Please fill all required fields",

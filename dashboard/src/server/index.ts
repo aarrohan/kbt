@@ -1,5 +1,6 @@
 import { router } from "./trpc";
 import { TRPCError } from "@trpc/server";
+import { productRouter } from "./routers/product";
 import { categoryRouter } from "./routers/category";
 import { couponRouter } from "./routers/coupon";
 
@@ -19,6 +20,7 @@ export const roleBasedAuth = (
 };
 
 export const appRouter = router({
+  product: productRouter,
   category: categoryRouter,
   coupon: couponRouter,
 });

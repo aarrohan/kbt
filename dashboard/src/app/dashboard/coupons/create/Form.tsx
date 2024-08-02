@@ -66,6 +66,8 @@ export default function Form() {
           publishDate: publishDate ? publishDate.toString() : undefined,
         });
       } else {
+        setIsCreating(false);
+
         toast({
           variant: "destructive",
           title: "Please fill all required fields",

@@ -37,6 +37,10 @@ export default function TopBarTitle() {
       path: "/dashboard/products",
     },
     {
+      title: "New product",
+      path: "/dashboard/products/create",
+    },
+    {
       title: "Categories",
       path: "/dashboard/categories",
     },

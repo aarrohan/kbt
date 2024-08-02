@@ -45,7 +45,7 @@ export default function Form({ category }: { category: Category }) {
   );
 
   const { toast } = useToast();
-  const { startUpload } = useUploadThing("imageUploader");
+  const { startUpload } = useUploadThing("mediaUploader");
   const { mutate: updateCategory } = trpc.category.update.useMutation({
     onMutate() {
       setIsSavingChanges(true);
@@ -92,6 +92,8 @@ export default function Form({ category }: { category: Category }) {
           publishDate: publishDate ? publishDate.toString() : undefined,
         });
       } else {
+        setIsSavingChanges(false);
+
         toast({
           variant: "destructive",
           title: "Please fill all required fields",

@@ -36,7 +36,7 @@ export default function Form() {
   const [publishDate, setPublishDate] = useState<Date | undefined>();
 
   const { toast } = useToast();
-  const { startUpload } = useUploadThing("imageUploader");
+  const { startUpload } = useUploadThing("mediaUploader");
   const { mutate: createCategory } = trpc.category.create.useMutation({
     onMutate() {
       setIsCreating(true);
@@ -92,6 +92,8 @@ export default function Form() {
           publishDate: publishDate ? publishDate.toString() : undefined,
         });
       } else {
+        setIsCreating(false);
+
         toast({
           variant: "destructive",
           title: "Please fill all required fields",

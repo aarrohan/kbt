@@ -6,9 +6,9 @@ import { authOptions } from "@/lib/auth";
 const f = createUploadthing();
 
 export const ourFileRouter = {
-  imageUploader: f({
-    image: { maxFileSize: "4MB", maxFileCount: 5 },
-    video: { maxFileSize: "8MB", maxFileCount: 1 },
+  mediaUploader: f({
+    image: { maxFileSize: "1MB", maxFileCount: 100 },
+    video: { maxFileSize: "8MB", maxFileCount: 100 },
   })
     .middleware(async () => {
       const session = await getServerSession(authOptions);

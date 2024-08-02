@@ -1,116 +1,143 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
-export default function Canvas() {
+interface IProps {
+  selectedProducts: IProduct[];
+}
+
+interface IModel {
+  imgUrl: string;
+  name: string;
+  height: string;
+  size: string;
+}
+
+export default function Canvas({ selectedProducts }: IProps) {
+  const [isProductSelected, setIsProductSelected] = useState<boolean>(false);
+  const [isModelLoaded, setIsModelLoaded] = useState<boolean>(false);
   const [activeModel, setActiveModel] = useState<number>(0);
 
+  useEffect(() => {
+    if (selectedProducts.length > 0) {
+      setIsProductSelected(true);
+    } else {
+      setIsProductSelected(false);
+    }
+  }, [selectedProducts]);
+
+  const models: IModel[] = [
+    {
+      imgUrl: "/images/models/amelia.png",
+      name: "Amelia",
+      height: "170cm / 5'7",
+      size: "37",
+    },
+    {
+      imgUrl: "/images/models/scarlett.png",
+      name: "Scarlett",
+      height: "182cm / 6",
+      size: "39",
+    },
+    {
+      imgUrl: "/images/models/luna.png",
+      name: "Luna",
+      height: "175cm / 5'9",
+      size: "38",
+    },
+    {
+      imgUrl: "/images/models/xisu.png",
+      name: "Xisu",
+      height: "160cm / 5'3",
+      size: "36",
+    },
+    {
+      imgUrl: "/images/models/grace.png",
+      name: "Grace",
+      height: "165cm / 5'5",
+      size: "40",
+    },
+  ];
+
   return (
-    <div className="relative aspect-[3/4] sm:aspect-square">
+    <div className="relative w-full lg:w-fit lg:h-[70svh] xl:h-[100svh] aspect-[2/3]">
+      <Link
+        href="/"
+        className="absolute top-5 left-8 z-20 font-serif text-3xl font-bold text-dark duration-300"
+      >
+        KBT
+      </Link>
+
+      {isProductSelected && !isModelLoaded && (
+        <div className="absolute top-0 left-0 z-10 w-full h-full bg-foreground-1/75 flex justify-center items-center">
+          <p className="text-white">Wearing...</p>
+        </div>
+      )}
+
       <Image
-        src="/images/product-9.png"
+        src={models[activeModel].imgUrl}
         alt=""
         fill={true}
         objectFit="cover"
         objectPosition="top"
       />
 
-      {activeModel === 0 ? (
-        <div className="absolute top-28 right-5 space-y-1">
-          <h5 className="text-lg font-medium text-right text-dark">Jade</h5>
+      {selectedProducts.map((product, index) => {
+        return (
+          <Image
+            key={index}
+            onLoad={() => {
+              setIsModelLoaded(true);
+            }}
+            src={product.modelImgUrls[activeModel]}
+            alt=""
+            fill={true}
+            objectFit="cover"
+            objectPosition="top"
+            className={`${
+              isModelLoaded ? "opacity-100" : "opacity-0"
+            } transition`}
+          />
+        );
+      })}
 
-          <p className="text-sm text-right">162 / 5'3</p>
+      <div className="absolute top-5 right-8 z-20 space-y-1">
+        <h5 className="text-lg font-medium text-right text-dark">
+          {models[activeModel].name}
+        </h5>
 
-          <p className="text-sm text-right">Size: 36</p>
-        </div>
-      ) : activeModel === 1 ? (
-        <div className="absolute top-28 right-5 space-y-1">
-          <h5 className="text-lg font-medium text-right text-dark">Kara</h5>
+        <p className="text-sm text-right">{models[activeModel].height}</p>
 
-          <p className="text-sm text-right">170cm / 5'7</p>
+        <p className="text-sm text-right">Size: {models[activeModel].size}</p>
+      </div>
 
-          <p className="text-sm text-right">Size: 37</p>
-        </div>
-      ) : activeModel === 2 ? (
-        <div className="absolute top-28 right-5 space-y-1">
-          <h5 className="text-lg font-medium text-right text-dark">Xae</h5>
+      <div className="absolute bottom-5 z-20 w-full px-8 flex justify-between">
+        <button
+          onClick={() => {
+            setIsModelLoaded(false);
 
-          <p className="text-sm text-right">180 / 5'10</p>
+            setActiveModel((prev) =>
+              prev === 0 ? models.length - 1 : prev - 1
+            );
+          }}
+          className={`text-xs font-medium uppercase tracking-[1.5px] text-dark`}
+        >
+          Prev
+        </button>
 
-          <p className="text-sm text-right">Size: 38</p>
-        </div>
-      ) : (
-        <div className="absolute top-28 right-5 space-y-1">
-          <h5 className="text-lg font-medium text-right text-dark">Howard</h5>
+        <button
+          onClick={() => {
+            setIsModelLoaded(false);
 
-          <p className="text-sm text-right">190cm / 6'2</p>
-
-          <p className="text-sm text-right">Size: 39</p>
-        </div>
-      )}
-
-      <div className="absolute bottom-5 left-5 flex items-center gap-5">
-        <p className="text-xs font-medium uppercase tracking-[1.5px] text-dark">
-          Models:
-        </p>
-
-        <div className="flex gap-3">
-          <div
-            onClick={() => setActiveModel(0)}
-            className={`relative w-[40px] h-[40px] border ${
-              activeModel === 0 ? "border-dark" : "border-transparent"
-            } cursor-pointer duration-300`}
-          >
-            <Image
-              src="/images/model-1-avatar.png"
-              alt=""
-              fill={true}
-              objectFit="cover"
-            />
-          </div>
-
-          <div
-            onClick={() => setActiveModel(1)}
-            className={`relative w-[40px] h-[40px] border ${
-              activeModel === 1 ? "border-dark" : "border-transparent"
-            } cursor-pointer duration-300`}
-          >
-            <Image
-              src="/images/model-2-avatar.png"
-              alt=""
-              fill={true}
-              objectFit="cover"
-            />
-          </div>
-
-          <div
-            onClick={() => setActiveModel(2)}
-            className={`relative w-[40px] h-[40px] border ${
-              activeModel === 2 ? "border-dark" : "border-transparent"
-            } cursor-pointer duration-300`}
-          >
-            <Image
-              src="/images/model-3-avatar.png"
-              alt=""
-              fill={true}
-              objectFit="cover"
-            />
-          </div>
-
-          <div
-            onClick={() => setActiveModel(3)}
-            className={`relative w-[40px] h-[40px] border ${
-              activeModel === 3 ? "border-dark" : "border-transparent"
-            } cursor-pointer duration-300`}
-          >
-            <Image
-              src="/images/model-4-avatar.png"
-              alt=""
-              fill={true}
-              objectFit="cover"
-            />
-          </div>
-        </div>
+            setActiveModel((prev) =>
+              prev === models.length - 1 ? 0 : prev + 1
+            );
+          }}
+          className={`text-xs font-medium uppercase tracking-[1.5px] text-dark`}
+        >
+          Next
+        </button>
       </div>
     </div>
   );

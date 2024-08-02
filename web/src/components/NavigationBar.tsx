@@ -6,6 +6,8 @@ import Link from "next/link";
 export default function NavigationBar() {
   const pathname = usePathname();
 
+  if (pathname === "/virtual-trial-room") return;
+
   return (
     <nav
       className={`${

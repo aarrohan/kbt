@@ -12,3 +12,11 @@ export function twoCharactersName(name: string) {
 export function numberWithCommas(x: number) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
+
+export const toCents = (amount: number) => {
+  return Math.round(amount * 100);
+};
+
+export const fromCents = (cents: number) => {
+  return (cents / 100).toFixed(2);
+};
