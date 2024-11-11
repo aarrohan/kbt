@@ -1,19 +1,29 @@
-import type { Metadata } from "next";
-import prisma from "@/lib/prisma";
-import VTR from "./VTR";
+"use client";
+import { useEffect } from "react";
+// import type { Metadata } from "next";
+// import prisma from "@/lib/prisma";
+// import VTR from "./VTR";
 
-export const metadata: Metadata = {
-  title: "Virtual Trial Room - KBT",
-};
+// export const metadata: Metadata = {
+//   title: "Virtual Trial Room - KBT",
+// };
 
-export default async function VirtualTrialRoom() {
-  const products: IProduct[] = await prisma.product.findMany({
-    include: {
-      category: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
+export default function VirtualTrialRoom() {
+  // const products: IProduct[] = await prisma.product.findMany({
+  //   include: {
+  //     category: true,
+  //   },
+  //   orderBy: {
+  //     createdAt: "desc",
+  //   },
+  // });
+
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
   });
 
   // return <VTR products={products} />;
