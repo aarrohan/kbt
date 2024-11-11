@@ -16,5 +16,11 @@ export default async function VirtualTrialRoom() {
     },
   });
 
-  return <VTR products={products} />;
+  // return <VTR products={products} />;
+  return (
+    <iframe
+      src="https://kbt-vrtr.netlify.app/"
+      className="fixed top-0 left-0 w-full h-[100svh]"
+    />
+  );
 }
